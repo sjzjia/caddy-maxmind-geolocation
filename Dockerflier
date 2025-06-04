@@ -1,0 +1,19 @@
+FROM golang:alpine
+
+RUN apk update
+
+RUN apk add git
+
+RUN go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+
+RUN xcaddy build --with github.com/porech/caddy-maxmind-geolocation
+
+RUN mv caddy /usr/sbin/
+
+COPY GeoLite2-Country.mmdb /etc/caddy/
+
+EXPOSE 2019
+EXPOSE 80
+EXPOSE 443
+
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]
